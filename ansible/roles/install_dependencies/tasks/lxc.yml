@@ -1,0 +1,16 @@
+- name: Update APT package index (Debian/Ubuntu)
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install LXC (Debian/Ubuntu)
+  apt:
+    name: lxc
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install LXC (RedHat/CentOS)
+  yum:
+    name: lxc
+    state: present
+  when: ansible_os_family == "RedHat"

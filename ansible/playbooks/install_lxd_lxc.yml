@@ -1,0 +1,10 @@
+---
+- name: Install LXD and LXC
+  hosts: lxd_lxc_hosts
+  become: yes
+  remote_user: admin
+  roles:
+    - role: install_dependencies
+
+
+

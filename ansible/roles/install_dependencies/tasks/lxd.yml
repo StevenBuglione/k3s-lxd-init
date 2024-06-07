@@ -1,0 +1,22 @@
+- name: Update APT package index (Debian/Ubuntu)
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install LXD (Debian/Ubuntu)
+  apt:
+    name: lxd
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install LXD (RedHat/CentOS)
+  yum:
+    name: lxd
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Start and enable LXD service
+  service:
+    name: lxd
+    state: started
+    enabled: yes

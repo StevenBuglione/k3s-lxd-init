@@ -1,0 +1,21 @@
+version: '3'
+
+tasks:
+  default:
+    desc: "Default task to list all available tasks"
+    cmds:
+      - go-task --list
+
+  create:
+    desc: "Install dependencies for k3s on LXC with LXD"
+    cmds:
+      - ANSIBLE_CONFIG=./ansible/ansible.cfg ansible-playbook -i ./ansible/inventories/hosts ./ansible/playbooks/install_lxd_lxc.yml
+    interactive: true
+
+  destroy:
+    desc: "Uninstall dependencies for k3s on LXC with LXD"
+    cmds:
+      - ANSIBLE_CONFIG=./ansible/ansible.cfg ansible-playbook -i ./ansible/inventories/hosts ./ansible/playbooks/uninstall_lxd_lxc.yml
+    interactive: true
+
+
