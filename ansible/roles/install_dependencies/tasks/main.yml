@@ -1,3 +1,0 @@
----
-- include_tasks: lxc.yml
-- include_tasks: lxd.yml

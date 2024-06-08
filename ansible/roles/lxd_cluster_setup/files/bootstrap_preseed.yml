@@ -1,0 +1,28 @@
+config:
+  core.trust_password: password
+  core.https_address: 10.10.10.2:8443
+  images.auto_update_interval: 15
+storage_pools:
+  - name: default
+    driver: dir
+networks:
+  - name: lxdbr0
+    type: bridge
+    config:
+      ipv4.address: 192.168.100.1/24
+      ipv6.address: none
+profiles:
+  - name: default
+    devices:
+      root:
+        path: /
+        pool: default
+        type: disk
+      eth0:
+        name: eth0
+        nictype: bridged
+        parent: lxdbr0
+        type: nic
+cluster:
+  server_name: node1
+  enabled: true

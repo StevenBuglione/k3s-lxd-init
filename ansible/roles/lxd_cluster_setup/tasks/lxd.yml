@@ -48,6 +48,17 @@
     - ansible_os_family == "Debian"
     - snap_installed.rc != 0
 
+- name: Ensure Snap's bin directory is in the PATH for all users
+  lineinfile:
+    path: /etc/profile.d/snap.sh
+    line: 'export PATH=$PATH:/snap/bin'
+    create: yes
+    state: present
+
+- name: Ensure Snap's bin directory is in the current shell PATH
+  shell: '. /etc/profile.d/snap.sh'
+  when: snap_installed.rc != 0
+
 - name: Install Snap core if not already installed
   shell: snap install core
   when: snap_installed.rc != 0
@@ -62,6 +73,13 @@
     name: snap.lxd.daemon
     state: started
     enabled: yes
+
+- name: Ensure Snap's bin directory is in the PATH for sudo
+  lineinfile:
+    path: /etc/sudoers.d/snap
+    line: 'Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"'
+    create: yes
+    state: present
 
 
 

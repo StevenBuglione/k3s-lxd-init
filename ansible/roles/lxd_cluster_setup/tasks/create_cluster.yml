@@ -1,0 +1,14 @@
+---
+- name: Upload bootstrap preseed file
+  copy:
+    src: bootstrap_preseed.yml
+    dest: /tmp/bootstrap_preseed.yml
+  when: inventory_hostname == groups['hosts'][0]
+
+- name: Initialize LXD cluster with preseed
+  shell: |
+    lxd init --preseed < /tmp/bootstrap_preseed.yml
+  when: inventory_hostname == groups['hosts'][0]
+
+
+
