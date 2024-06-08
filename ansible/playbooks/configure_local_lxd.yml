@@ -1,7 +1,6 @@
 ---
 - name: Configure local LXD to interact with remote cluster
   hosts: localhost
-  become: yes
   connection: local
   vars:
     lxd_cluster_password: "{{ hostvars['pi']['lxd_cluster_password'] }}"
@@ -10,52 +9,6 @@
     lxd_cluster_name: "{{ hostvars['pi']['lxd_cluster_name'] }}"
 
   tasks:
-    - name: Ensure Snapd is installed
-      package:
-        name: snapd
-        state: present
-      when: ansible_os_family in ["Debian", "RedHat"]
-
-    - name: Enable and start Snapd service (RedHat/CentOS/Fedora)
-      systemd:
-        name: snapd
-        state: started
-        enabled: yes
-      when: ansible_os_family == "RedHat"
-
-    - name: Create symbolic link for Snap (RedHat/CentOS/Fedora)
-      file:
-        src: /var/lib/snapd/snap
-        dest: /snap
-        state: link
-        force: yes
-      when: ansible_os_family == "RedHat"
-
-    - name: Enable and start Snapd socket (Debian/Ubuntu)
-      systemd:
-        name: snapd.socket
-        state: started
-        enabled: yes
-      when: ansible_os_family == "Debian"
-
-    - name: Ensure Snap's bin directory is in the PATH for all users
-      lineinfile:
-        path: /etc/profile.d/snap.sh
-        line: 'export PATH=$PATH:/snap/bin'
-        create: yes
-        state: present
-
-    - name: Ensure Snap's bin directory is in the current shell PATH
-      shell: '. /etc/profile.d/snap.sh'
-
-    - name: Install Snap core if not already installed
-      shell: snap install core
-
-    - name: Install LXD
-      snap:
-        name: lxd
-        state: present
-
     - name: Copy cluster certificate from bootstrap node to local machine
       local_action:
         module: command
@@ -99,6 +52,10 @@
     - name: Debug LXD remote list after adding
       shell: lxc remote list
       register: remote_list
+      become: no
+
+    - name: Set lxc remote as default
+      shell: lxc remote switch {{ lxd_cluster_name }}
       become: no
 
     - name: Display LXD remote list
