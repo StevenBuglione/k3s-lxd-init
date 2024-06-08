@@ -1,18 +1,26 @@
 ---
 - name: Stop and disable LXD service
   service:
-    name: lxd
+    name: snap.lxd.daemon
     state: stopped
     enabled: no
 
-- name: Uninstall LXD (Debian/Ubuntu)
-  apt:
+- name: Uninstall LXD via Snap
+  snap:
     name: lxd
+    state: absent
+
+- name: Uninstall Snapd (Debian/Ubuntu)
+  apt:
+    name: snapd
     state: absent
   when: ansible_os_family == "Debian"
 
-- name: Uninstall LXD (RedHat/CentOS)
+- name: Uninstall Snapd (RedHat/CentOS)
   yum:
-    name: lxd
+    name: snapd
     state: absent
   when: ansible_os_family == "RedHat"
+
+
+

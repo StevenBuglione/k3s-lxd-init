@@ -1,22 +1,68 @@
-- name: Update APT package index (Debian/Ubuntu)
-  apt:
-    update_cache: yes
-  when: ansible_os_family == "Debian"
+---
+- name: Check if Snap is installed
+  command: which snap
+  register: snap_installed
+  ignore_errors: yes
 
-- name: Install LXD (Debian/Ubuntu)
+- name: Ensure Snapd is installed (Debian/Ubuntu)
   apt:
-    name: lxd
+    name: snapd
     state: present
-  when: ansible_os_family == "Debian"
+  when:
+    - ansible_os_family == "Debian"
+    - snap_installed.rc != 0
 
-- name: Install LXD (RedHat/CentOS)
+- name: Ensure Snapd is installed (RedHat/CentOS/Fedora)
   yum:
-    name: lxd
+    name: snapd
     state: present
-  when: ansible_os_family == "RedHat"
+  when:
+    - ansible_os_family == "RedHat"
+    - snap_installed.rc != 0
 
-- name: Start and enable LXD service
-  service:
-    name: lxd
+- name: Enable and start Snapd service (RedHat/CentOS/Fedora)
+  systemd:
+    name: snapd
     state: started
     enabled: yes
+  when:
+    - ansible_os_family == "RedHat"
+    - snap_installed.rc != 0
+
+- name: Create symbolic link for Snap (RedHat/CentOS/Fedora)
+  file:
+    src: /var/lib/snapd/snap
+    dest: /snap
+    state: link
+    force: yes
+  when:
+    - ansible_os_family == "RedHat"
+    - snap_installed.rc != 0
+
+- name: Enable and start Snapd socket (Debian/Ubuntu)
+  systemd:
+    name: snapd.socket
+    state: started
+    enabled: yes
+  when:
+    - ansible_os_family == "Debian"
+    - snap_installed.rc != 0
+
+- name: Install Snap core if not already installed
+  shell: snap install core
+  when: snap_installed.rc != 0
+
+- name: Install LXD via Snap
+  snap:
+    name: lxd
+    state: present
+
+- name: Start and enable LXD service (Snap)
+  service:
+    name: snap.lxd.daemon
+    state: started
+    enabled: yes
+
+
+
+
