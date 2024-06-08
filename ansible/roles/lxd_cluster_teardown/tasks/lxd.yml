@@ -4,23 +4,35 @@
     name: snap.lxd.daemon
     state: stopped
     enabled: no
+  ignore_errors: yes
 
 - name: Uninstall LXD via Snap
   snap:
     name: lxd
     state: absent
+  ignore_errors: yes
 
-- name: Uninstall Snapd (Debian/Ubuntu)
-  apt:
-    name: snapd
-    state: absent
-  when: ansible_os_family == "Debian"
+- name: Remove LXD network lxdbr0
+  command: lxc network delete lxdbr0
+  ignore_errors: yes
 
-- name: Uninstall Snapd (RedHat/CentOS)
-  yum:
-    name: snapd
+- name: Remove orphaned network interfaces
+  shell: |
+    for iface in $(ls /sys/class/net | grep -E 'br-|lxdbr0|veth'); do
+      ip link delete $iface
+    done
+  ignore_errors: yes
+
+- name: Clear LXD configuration directory
+  file:
+    path: /var/snap/lxd/common/lxd
     state: absent
-  when: ansible_os_family == "RedHat"
+    recurse: yes
+  ignore_errors: yes
+
+
+
+
 
 
 

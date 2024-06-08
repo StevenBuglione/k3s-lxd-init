@@ -1,0 +1,12 @@
+---
+- name: Stop DNSMasq service if running
+  service:
+    name: dnsmasq
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: Kill any running dnsmasq processes
+  shell: |
+    pkill -f dnsmasq
+  ignore_errors: yes

@@ -56,3 +56,12 @@
     msg: "LXC command is still available"
   when: lxc_check.rc == 0
 
+- name: Remove orphaned network interfaces
+  shell: |
+    for iface in $(ls /sys/class/net | grep -E 'br-|veth|lxcbr0'); do
+      ip link delete $iface
+    done
+  ignore_errors: yes
+
+
+

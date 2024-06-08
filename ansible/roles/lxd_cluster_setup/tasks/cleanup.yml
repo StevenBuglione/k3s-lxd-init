@@ -1,0 +1,12 @@
+---
+- name: Stop LXD service
+  service:
+    name: lxd
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: Delete conflicting network interface
+  shell: |
+    ip link delete lxcbr0
+  ignore_errors: yes
