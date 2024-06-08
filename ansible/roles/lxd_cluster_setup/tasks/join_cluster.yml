@@ -1,4 +1,14 @@
 ---
+- name: Check if node is already a cluster member
+  shell: |
+    lxc cluster show {{ inventory_hostname }}
+  register: node_check
+  ignore_errors: true
+
+- name: Set fact if node is already a cluster member
+  set_fact:
+    node_already_member: "{{ node_check.rc == 0 }}"
+
 - name: Retrieve and format cluster certificate
   command: sed ':a;N;$!ba;s/\n/\n\n/g' /var/snap/lxd/common/lxd/cluster.crt
   register: cluster_cert
@@ -11,7 +21,7 @@
     cluster_certificate: "{{ cluster_cert.stdout }}"
   when: inventory_hostname == groups['all'][0]
 
-- name: Set cluster certificate fact for all all
+- name: Set cluster certificate fact for all hosts
   set_fact:
     cluster_certificate: "{{ hostvars[groups['all'][0]]['cluster_certificate'] }}"
   when: inventory_hostname != groups['all'][0]
@@ -20,12 +30,16 @@
   template:
     src: join_preseed.yml.j2
     dest: /tmp/join_preseed.yml
-  when: inventory_hostname != groups['all'][0]
+  when:
+    - inventory_hostname != groups['all'][0]
+    - not node_already_member
 
 - name: Join LXD cluster with preseed
   shell: |
     lxd init --preseed < /tmp/join_preseed.yml
-  when: inventory_hostname != groups['all'][0]
+  when:
+    - inventory_hostname != groups['all'][0]
+    - not node_already_member
 
 
 

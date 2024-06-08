@@ -1,6 +1,23 @@
 ---
+- name: Check if LXD cluster is already initialized
+  shell: |
+    lxc cluster list | grep -q "database-leader"
+  register: cluster_check
+  ignore_errors: true
+
+- name: Set fact for cluster initialization status
+  set_fact:
+    cluster_initialized: "{{ cluster_check.rc == 0 }}"
+
 - include_tasks: cleanup.yml
+
 - include_tasks: lxc.yml
+
 - include_tasks: lxd.yml
+
 - include_tasks: create_cluster.yml
+  when: not cluster_initialized
+
 - include_tasks: join_cluster.yml
+  when: cluster_initialized
+
