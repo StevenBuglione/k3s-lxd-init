@@ -1,6 +1,6 @@
 cluster:
   enabled: true
-  server_name: {{ inventory_hostname }}
+  server_name: {{ server_name }}
   server_address: {{ ansible_host }}:8443
   cluster_address: {{ bootstrap_address }}:8443
   cluster_certificate: "{{ cluster_certificate }}"

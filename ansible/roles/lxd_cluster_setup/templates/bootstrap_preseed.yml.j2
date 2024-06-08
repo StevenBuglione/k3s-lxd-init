@@ -1,6 +1,6 @@
 config:
-  core.trust_password: password
-  core.https_address: 10.10.10.2:8443
+  core.trust_password: "{{ lxd_cluster_password }}"
+  core.https_address: "{{ ansible_host }}:8443"
   images.auto_update_interval: 15
 storage_pools:
   - name: default
@@ -9,7 +9,7 @@ networks:
   - name: lxdbr0
     type: bridge
     config:
-      ipv4.address: 192.168.200.1/24
+      ipv4.address: "{{ lxd_cluster_address }}"
       ipv6.address: none
 profiles:
   - name: default
@@ -24,5 +24,5 @@ profiles:
         parent: lxdbr0
         type: nic
 cluster:
-  server_name: node1
+  server_name: "{{ server_name }}"
   enabled: true
