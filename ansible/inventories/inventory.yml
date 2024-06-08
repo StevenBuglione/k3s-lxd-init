@@ -1,19 +1,29 @@
 all:
-  hosts:
-    pi:
-      ansible_host: 10.10.10.2
-      server_name: pi
-    mac:
-      ansible_host: 10.10.10.5
-      server_name: mac
-    dell:
-      ansible_host: 10.10.10.6
-      server_name: dell
+  children:
+    lxd_hosts:
+      hosts:
+        pi:
+          ansible_host: 10.10.10.2
+          server_name: pi
+        mac:
+          ansible_host: 10.10.10.5
+          server_name: mac
+        dell:
+          ansible_host: 10.10.10.6
+          server_name: dell
+    local:
+      hosts:
+        localhost:
+          ansible_connection: local
   vars:
     ansible_user: admin
     lxd_cluster_password: password
     lxd_cluster_address: 192.168.100.1/24
     bootstrap_address: "{{ hostvars['pi']['ansible_host'] }}"
+
+
+
+
 
 
 

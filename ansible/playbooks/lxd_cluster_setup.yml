@@ -1,6 +1,6 @@
 ---
 - name: Install LXD and LXC
-  hosts: all
+  hosts: lxd_hosts
   become: yes
   roles:
     - role: lxd_cluster_setup
