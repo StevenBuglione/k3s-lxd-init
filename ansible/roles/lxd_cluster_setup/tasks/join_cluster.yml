@@ -12,33 +12,32 @@
 - name: Retrieve and format cluster certificate
   command: sed ':a;N;$!ba;s/\n/\n\n/g' /var/snap/lxd/common/lxd/cluster.crt
   register: cluster_cert
-  run_once: true
-  delegate_to: "{{ groups['all'][0] }}"
-  when: inventory_hostname == groups['all'][0]
+  delegate_to: "{{ groups['lxd_hosts'][0] }}"
+  when: inventory_hostname == groups['lxd_hosts'][0]
 
 - name: Save cluster certificate to a fact
   set_fact:
     cluster_certificate: "{{ cluster_cert.stdout }}"
-  when: inventory_hostname == groups['all'][0]
+  when: inventory_hostname == groups['lxd_hosts'][0]
 
-- name: Set cluster certificate fact for all hosts
+- name: Set cluster certificate fact for lxd_hosts hosts
   set_fact:
-    cluster_certificate: "{{ hostvars[groups['all'][0]]['cluster_certificate'] }}"
-  when: inventory_hostname != groups['all'][0]
+    cluster_certificate: "{{ hostvars[groups['lxd_hosts'][0]]['cluster_certificate'] }}"
+  when: inventory_hostname != groups['lxd_hosts'][0]
 
 - name: Create join preseed file
   template:
     src: join_preseed.yml.j2
     dest: /tmp/join_preseed.yml
   when:
-    - inventory_hostname != groups['all'][0]
+    - inventory_hostname != groups['lxd_hosts'][0]
     - not node_already_member
 
 - name: Join LXD cluster with preseed
   shell: |
     lxd init --preseed < /tmp/join_preseed.yml
   when:
-    - inventory_hostname != groups['all'][0]
+    - inventory_hostname != groups['lxd_hosts'][0]
     - not node_already_member
 
 

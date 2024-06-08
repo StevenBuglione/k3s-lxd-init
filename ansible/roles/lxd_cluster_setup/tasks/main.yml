@@ -19,7 +19,7 @@
   when: not cluster_initialized
 
 - include_tasks: join_cluster.yml
-  when: cluster_initialized
+
 
 
 
