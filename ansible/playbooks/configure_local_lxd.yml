@@ -29,10 +29,9 @@
       register: remote_check
       become: no
 
-    - name: Debug remote check result
-      debug:
-        msg: "Remote check result: {{ remote_check }}"
-      become: no
+    - name: Change default LXC remote to local
+      shell: lxc remote switch local
+      ignore_errors: yes
 
     - name: Remove existing remote if it exists
       shell: lxc remote remove {{ lxd_cluster_name }}
