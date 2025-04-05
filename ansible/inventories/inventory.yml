@@ -2,25 +2,29 @@ all:
   children:
     lxd_hosts:
       hosts:
-        pi:
-          ansible_host: 10.10.10.2
-          server_name: pi
-        mac:
+        pluto:
           ansible_host: 10.10.10.5
-          server_name: mac
-        dell:
+          server_name: pluto
+        neptune:
+          ansible_host: 10.10.10.3
+          server_name: neptune
+        saturn:
+          ansible_host: 10.10.10.4
+          server_name: saturn
+        earth:
           ansible_host: 10.10.10.6
-          server_name: dell
+          server_name: earth
     local:
       hosts:
         localhost:
           ansible_connection: local
   vars:
-    ansible_user: admin
+    ansible_user: sbuglione
+    ansible_ssh_private_key_file: ~/.ssh/ansible-key
     lxd_cluster_password: password
     lxd_cluster_address: 192.168.100.1/24
-    lxd_cluster_name: dev-cluster
-    bootstrap_address: "{{ hostvars['pi']['ansible_host'] }}"
+    lxd_cluster_name: klustered
+    bootstrap_address: "{{ hostvars['pluto']['ansible_host'] }}"
 
 
 

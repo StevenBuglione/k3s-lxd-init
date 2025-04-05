@@ -3,10 +3,10 @@
   hosts: localhost
   connection: local
   vars:
-    lxd_cluster_password: "{{ hostvars['pi']['lxd_cluster_password'] }}"
-    bootstrap_address: "{{ hostvars['pi']['bootstrap_address'] }}"
-    ansible_user: "{{ hostvars['pi']['ansible_user'] }}"
-    lxd_cluster_name: "{{ hostvars['pi']['lxd_cluster_name'] }}"
+    lxd_cluster_password: "{{ hostvars['pluto']['lxd_cluster_password'] }}"
+    bootstrap_address: "{{ hostvars['pluto']['bootstrap_address'] }}"
+    ansible_user: "{{ hostvars['pluto']['ansible_user'] }}"
+    lxd_cluster_name: "{{ hostvars['pluto']['lxd_cluster_name'] }}"
 
   tasks:
     - name: Copy cluster certificate from bootstrap node to local machine

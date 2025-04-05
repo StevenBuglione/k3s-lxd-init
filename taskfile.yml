@@ -7,7 +7,7 @@ tasks:
       - go-task --list
 
   create:
-    desc: "Install dependencies for k3s on LXC with LXD and configure local machine"
+    desc: "Install dependencies for k3s on LXC with LXD and configure local plutohine"
     cmds:
       - task: create_cluster
       - task: local_configure
@@ -20,9 +20,9 @@ tasks:
     interactive: true
 
   local_configure:
-    desc: "Configure local machine to interact with LXD cluster"
+    desc: "Configure local plutohine to interact with LXD cluster"
     cmds:
-      - ANSIBLE_CONFIG=./ansible/ansible.cfg ansible-playbook -i ./ansible/inventories/inventory.yml --limit localhost --connection=local --extra-vars "ansible_user=admin lxd_cluster_password=password bootstrap_address=10.10.10.2" --ask-become-pass ./ansible/playbooks/configure_local_lxd.yml
+      - ANSIBLE_CONFIG=./ansible/ansible.cfg ansible-playbook -i ./ansible/inventories/inventory.yml --limit localhost --connection=local --extra-vars "ansible_user=sbuglione lxd_cluster_password=password bootstrap_address=10.10.10.5" --ask-become-pass ./ansible/playbooks/configure_local_lxd.yml
     interactive: true
 
   destroy:
