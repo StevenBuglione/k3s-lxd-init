@@ -1,19 +1,23 @@
 all:
   children:
-    lxd_hosts:
-      hosts:
-        pluto:
-          ansible_host: 10.10.10.5
-          server_name: pluto
-        neptune:
-          ansible_host: 10.10.10.3
-          server_name: neptune
-        saturn:
-          ansible_host: 10.10.10.4
-          server_name: saturn
-        earth:
-          ansible_host: 10.10.10.6
-          server_name: earth
+    lxd_cluster:
+      children:
+        bootstrap_server:  # Primary server that initializes the cluster
+          hosts:
+            pluto:
+              ansible_host: 10.10.10.5
+              server_name: pluto
+        member_servers:    # Secondary servers that join the existing cluster
+          hosts:
+            neptune:
+              ansible_host: 10.10.10.3
+              server_name: neptune
+            saturn:
+              ansible_host: 10.10.10.4
+              server_name: saturn
+            earth:
+              ansible_host: 10.10.10.6
+              server_name: earth
     local:
       hosts:
         localhost:
@@ -21,10 +25,10 @@ all:
   vars:
     ansible_user: sbuglione
     ansible_ssh_private_key_file: ~/.ssh/ansible-key
-    lxd_cluster_password: password
+    lxd_cluster_password: "{{ lookup('env', 'LXD_CLUSTER_PASSWORD') | default('password', true) }}"
     lxd_cluster_address: 192.168.100.1/24
     lxd_cluster_name: klustered
-    bootstrap_address: "{{ hostvars['pluto']['ansible_host'] }}"
+    bootstrap_address: "{{ hostvars[groups['bootstrap_server'][0]]['ansible_host'] }}"
 
 
 

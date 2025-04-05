@@ -5,6 +5,7 @@
     state: absent
     purge: yes
   when: ansible_os_family == "Debian"
+  tags: cleanup
 
 - name: Remove additional LXC packages (Debian/Ubuntu)
   apt:
@@ -15,23 +16,27 @@
     - lxc-utils
     - lxc-templates
   when: ansible_os_family == "Debian"
+  tags: cleanup
 
 - name: Remove unused packages and clean up (Debian/Ubuntu)
   apt:
     autoremove: yes
     purge: yes
   when: ansible_os_family == "Debian"
+  tags: cleanup
 
 - name: Clean APT cache (Debian/Ubuntu)
   apt:
     autoclean: yes
   when: ansible_os_family == "Debian"
+  tags: cleanup
 
 - name: Uninstall LXC (RedHat/CentOS)
   yum:
     name: lxc
     state: absent
   when: ansible_os_family == "RedHat"
+  tags: cleanup
 
 - name: Remove additional LXC packages (RedHat/CentOS)
   yum:
@@ -41,20 +46,24 @@
     - lxc-extra
     - lxc-templates
   when: ansible_os_family == "RedHat"
+  tags: cleanup
 
 - name: Clean YUM cache (RedHat/CentOS)
   command: yum clean all
   when: ansible_os_family == "RedHat"
+  tags: cleanup
 
 - name: Verify LXC is uninstalled
   command: which lxc
   register: lxc_check
   ignore_errors: yes
+  tags: cleanup
 
 - name: Debug LXC check result
   debug:
     msg: "LXC command is still available"
   when: lxc_check.rc == 0
+  tags: cleanup
 
 - name: Remove orphaned network interfaces
   shell: |
@@ -62,6 +71,7 @@
       ip link delete $iface
     done
   ignore_errors: yes
+  tags: cleanup
 
 
 

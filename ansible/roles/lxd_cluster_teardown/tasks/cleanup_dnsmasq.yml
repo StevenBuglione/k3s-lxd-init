@@ -5,8 +5,10 @@
     state: stopped
     enabled: no
   ignore_errors: yes
+  tags: cleanup
 
 - name: Kill any running dnsmasq processes
   shell: |
     pkill -f dnsmasq
   ignore_errors: yes
+  tags: cleanup

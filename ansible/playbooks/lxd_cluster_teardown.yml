@@ -1,6 +1,6 @@
 ---
 - name: Uninstall LXD and LXC
-  hosts: lxd_hosts
+  hosts: lxd_cluster
   become: yes
   roles:
     - role: lxd_cluster_teardown

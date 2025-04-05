@@ -5,16 +5,19 @@
     state: stopped
     enabled: no
   ignore_errors: yes
+  tags: cleanup
 
 - name: Uninstall LXD via Snap
   snap:
     name: lxd
     state: absent
   ignore_errors: yes
+  tags: cleanup
 
 - name: Remove LXD network lxdbr0
   command: lxc network delete lxdbr0
   ignore_errors: yes
+  tags: cleanup
 
 - name: Remove orphaned network interfaces
   shell: |
@@ -22,6 +25,7 @@
       ip link delete $iface
     done
   ignore_errors: yes
+  tags: cleanup
 
 - name: Clear LXD configuration directory
   file:
@@ -29,8 +33,7 @@
     state: absent
     recurse: yes
   ignore_errors: yes
-
-
+  tags: cleanup
 
 
 

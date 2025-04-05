@@ -1,39 +1,39 @@
 version: '3'
 
+vars:
+  ANSIBLE_CONFIG: ./ansible/ansible.cfg
+  INVENTORY: ./ansible/inventories/inventory.yml
+  BECOME_PROMPT: --ask-become-pass
+
 tasks:
+  # Help commands
   default:
-    desc: "Default task to list all available tasks"
+    desc: "List all available tasks"
     cmds:
       - go-task --list
+    silent: true
 
+  # Cluster management commands
   create:
-    desc: "Install dependencies for k3s on LXC with LXD and configure local plutohine"
+    desc: "Create and configure k3s cluster on LXC/LXD"
+    summary: |
+      Creates a new k3s cluster using LXC containers with LXD and
+      configures the local environment to interact with it
     cmds:
       - task: create_cluster
-      - task: local_configure
-    interactive: true
 
   create_cluster:
-    desc: "Install dependencies for k3s on LXC with LXD"
+    desc: "Deploy k3s on LXC containers with LXD"
+    env:
+      ANSIBLE_CONFIG: "{{.ANSIBLE_CONFIG}}"
     cmds:
-      - ANSIBLE_CONFIG=./ansible/ansible.cfg ansible-playbook -i ./ansible/inventories/inventory.yml ./ansible/playbooks/lxd_cluster_setup.yml
-    interactive: true
-
-  local_configure:
-    desc: "Configure local plutohine to interact with LXD cluster"
-    cmds:
-      - ANSIBLE_CONFIG=./ansible/ansible.cfg ansible-playbook -i ./ansible/inventories/inventory.yml --limit localhost --connection=local --extra-vars "ansible_user=sbuglione lxd_cluster_password=password bootstrap_address=10.10.10.5" --ask-become-pass ./ansible/playbooks/configure_local_lxd.yml
+      - ansible-playbook -i {{.INVENTORY}} ./ansible/playbooks/lxd_cluster_setup.yml
     interactive: true
 
   destroy:
-    desc: "Uninstall dependencies for k3s on LXC with LXD"
+    desc: "Tear down k3s LXC/LXD cluster"
+    env:
+      ANSIBLE_CONFIG: "{{.ANSIBLE_CONFIG}}"
     cmds:
-      - ANSIBLE_CONFIG=./ansible/ansible.cfg ansible-playbook -i ./ansible/inventories/inventory.yml ./ansible/playbooks/lxd_cluster_teardown.yml
+      - ansible-playbook -i {{.INVENTORY}} ./ansible/playbooks/lxd_cluster_teardown.yml
     interactive: true
-
-
-
-
-
-
-

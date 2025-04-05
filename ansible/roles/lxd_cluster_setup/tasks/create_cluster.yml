@@ -1,14 +1,15 @@
+# create_cluster.yml
 ---
 - name: Upload bootstrap preseed file
   template:
     src: bootstrap_preseed.yml.j2
     dest: /tmp/bootstrap_preseed.yml
-  when: inventory_hostname == groups['all'][0]
+  when: inventory_hostname in groups['bootstrap_server']
 
 - name: Initialize LXD cluster with preseed
   shell: |
     lxd init --preseed < /tmp/bootstrap_preseed.yml
-  when: inventory_hostname == groups['all'][0]
+  when: inventory_hostname in groups['bootstrap_server']
 
 
 

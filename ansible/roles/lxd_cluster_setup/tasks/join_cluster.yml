@@ -1,45 +1,39 @@
+# join_cluster.yml
 ---
-- name: Check if node is already a cluster member
+- name: Check if server is already a cluster member
   shell: |
     lxc cluster show {{ inventory_hostname }}
   register: node_check
   ignore_errors: true
 
-- name: Set fact if node is already a cluster member
+- name: Set fact if server is already a cluster member
   set_fact:
     node_already_member: "{{ node_check.rc == 0 }}"
 
-- name: Retrieve and format cluster certificate
+- name: Retrieve and format cluster certificate from bootstrap server
   command: sed ':a;N;$!ba;s/\n/\n\n/g' /var/snap/lxd/common/lxd/cluster.crt
   register: cluster_cert
-  delegate_to: "{{ groups['lxd_hosts'][0] }}"
-  when: inventory_hostname == groups['lxd_hosts'][0]
+  delegate_to: "{{ groups['bootstrap_server'][0] }}"
+  run_once: true
 
 - name: Save cluster certificate to a fact
   set_fact:
     cluster_certificate: "{{ cluster_cert.stdout }}"
-  when: inventory_hostname == groups['lxd_hosts'][0]
-
-- name: Set cluster certificate fact for lxd_hosts hosts
-  set_fact:
-    cluster_certificate: "{{ hostvars[groups['lxd_hosts'][0]]['cluster_certificate'] }}"
-  when: inventory_hostname != groups['lxd_hosts'][0]
 
 - name: Create join preseed file
   template:
     src: join_preseed.yml.j2
     dest: /tmp/join_preseed.yml
   when:
-    - inventory_hostname != groups['lxd_hosts'][0]
+    - inventory_hostname in groups['member_servers']
     - not node_already_member
 
 - name: Join LXD cluster with preseed
   shell: |
     lxd init --preseed < /tmp/join_preseed.yml
   when:
-    - inventory_hostname != groups['lxd_hosts'][0]
+    - inventory_hostname in groups['member_servers']
     - not node_already_member
-
 
 
 

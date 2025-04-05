@@ -9,8 +9,6 @@
   set_fact:
     cluster_initialized: "{{ cluster_check.rc == 0 }}"
 
-- include_tasks: cleanup.yml
-
 - include_tasks: lxc.yml
 
 - include_tasks: lxd.yml
