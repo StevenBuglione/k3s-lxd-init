@@ -18,6 +18,9 @@
 
 - include_tasks: join_cluster.yml
 
+- include_tasks: add_cluster_cert.yml
+
+
 
 
 

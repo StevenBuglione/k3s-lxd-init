@@ -1,0 +1,47 @@
+---
+# add_cluster_cert.yml
+- name: Create temporary certificate file
+  copy:
+    content: "{{ lxd_cluster_cert }}"
+    dest: "/tmp/cluster.crt"
+    mode: '0600'
+  delegate_to: "{{ groups['bootstrap_server'][0] }}"
+  run_once: true
+  no_log: true
+
+- name: Get certificates list
+  shell: lxc config trust list --format=json
+  register: cert_list
+  delegate_to: "{{ groups['bootstrap_server'][0] }}"
+  run_once: true
+  no_log: true
+
+- name: Extract fingerprint of certificate with matching name
+  set_fact:
+    matching_fingerprint: "{{ item.fingerprint }}"
+  loop: "{{ cert_list.stdout | from_json | json_query('[?name==`' + (lxd_cluster_cert_name | default('ci-client')) + '`]') }}"
+  delegate_to: "{{ groups['bootstrap_server'][0] }}"
+  run_once: true
+  no_log: true
+
+- name: Remove existing certificate if found
+  shell: lxc config trust remove {{ matching_fingerprint }}
+  delegate_to: "{{ groups['bootstrap_server'][0] }}"
+  run_once: true
+  when: matching_fingerprint is defined
+  no_log: true
+
+- name: Add certificate to cluster trust store with name
+  shell: |
+    lxc config trust add /tmp/cluster.crt --name="{{ lxd_cluster_cert_name | default('ci-client') }}"
+  delegate_to: "{{ groups['bootstrap_server'][0] }}"
+  run_once: true
+  register: trust_result
+  no_log: true
+
+- name: Remove temporary certificate file
+  file:
+    path: "/tmp/cluster.crt"
+    state: absent
+  delegate_to: "{{ groups['bootstrap_server'][0] }}"
+  run_once: true

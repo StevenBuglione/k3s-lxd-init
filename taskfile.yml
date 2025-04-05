@@ -30,6 +30,21 @@ tasks:
       - ansible-playbook -i {{.INVENTORY}} ./ansible/playbooks/lxd_cluster_setup.yml
     interactive: true
 
+  tfpd:
+    desc: "Terraform Plan Development Configuration"
+    cmds:
+      - mkdir -p ~/.config/lxc/
+      - echo $LXD_CLUSTER_CI_CERT > ~/.config/lxc/client.crt
+      - echo $LXD_CLUSTER_CI_KEY > ~/.config/lxc/client.key
+      - cd terraform && terraform plan -var-file=./config/dev.tfvars
+
+  tfad:
+    desc: "Terraform Plan Development Configuration"
+    cmds:
+      - mkdir -p ~/.config/lxc/
+      - echo $LXD_CLUSTER_CI_CERT > ~/.config/lxc/client.crt
+      - echo $LXD_CLUSTER_CI_KEY > ~/.config/lxc/client.key
+      - cd terraform && terraform apply -var-file=./config/dev.tfvars
   destroy:
     desc: "Tear down k3s LXC/LXD cluster"
     env:
