@@ -1,4 +1,6 @@
 ---
+- include_tasks: add_macvlan.yml
+
 - name: Check if LXD cluster is already initialized
   shell: |
     lxc cluster list | grep -q "database-leader"

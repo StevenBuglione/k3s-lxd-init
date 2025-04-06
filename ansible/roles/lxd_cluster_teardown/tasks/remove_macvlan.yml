@@ -1,0 +1,13 @@
+---
+# roles/remove_macvlan/tasks/main.yml
+
+- name: Check if macvlan0 interface exists
+  shell: ip link show macvlan0
+  register: macvlan_exists
+  ignore_errors: true
+  changed_when: false
+
+- name: Remove macvlan0 interface
+  command: ip link delete macvlan0
+  when: macvlan_exists.rc == 0
+  become: true

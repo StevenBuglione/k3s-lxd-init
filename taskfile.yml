@@ -20,7 +20,18 @@ tasks:
       Creates a new k3s cluster using LXC containers with LXD and
       configures the local environment to interact with it
     cmds:
-      - task: create_cluster
+#      - task: create_cluster
+      - ./join_lxd_cluster.sh
+      - task: tfad
+
+  destroy:
+    desc: "Tear down k3s LXC/LXD cluster"
+    env:
+      ANSIBLE_CONFIG: "{{.ANSIBLE_CONFIG}}"
+    cmds:
+      - task: tfdd
+      - ansible-playbook -i {{.INVENTORY}} ./ansible/playbooks/lxd_cluster_teardown.yml
+    interactive: true
 
   create_cluster:
     desc: "Deploy k3s on LXC containers with LXD"
@@ -33,22 +44,15 @@ tasks:
   tfpd:
     desc: "Terraform Plan Development Configuration"
     cmds:
-      - mkdir -p ~/.config/lxc/
-      - echo $LXD_CLUSTER_CI_CERT > ~/.config/lxc/client.crt
-      - echo $LXD_CLUSTER_CI_KEY > ~/.config/lxc/client.key
       - cd terraform && terraform plan -var-file=./config/dev.tfvars
 
   tfad:
     desc: "Terraform Plan Development Configuration"
     cmds:
-      - mkdir -p ~/.config/lxc/
-      - echo $LXD_CLUSTER_CI_CERT > ~/.config/lxc/client.crt
-      - echo $LXD_CLUSTER_CI_KEY > ~/.config/lxc/client.key
-      - cd terraform && terraform apply -var-file=./config/dev.tfvars
-  destroy:
-    desc: "Tear down k3s LXC/LXD cluster"
-    env:
-      ANSIBLE_CONFIG: "{{.ANSIBLE_CONFIG}}"
+      - cd terraform && terraform apply -var-file=./config/dev.tfvars -auto-approve
+
+  tfdd:
+    desc: "Terraform Destroy Development Configuration (Auto-Approve)"
     cmds:
-      - ansible-playbook -i {{.INVENTORY}} ./ansible/playbooks/lxd_cluster_teardown.yml
-    interactive: true
+      - cd terraform && terraform destroy -var-file=./config/dev.tfvars -auto-approve
+

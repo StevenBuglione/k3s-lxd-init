@@ -18,15 +18,11 @@ all:
             earth:
               ansible_host: 10.10.10.6
               server_name: earth
-    local:
-      hosts:
-        localhost:
-          ansible_connection: local
   vars:
     ansible_user: sbuglione
     ansible_ssh_private_key_file: ~/.ssh/ansible-key
     lxd_cluster_password: "{{ lookup('env', 'LXD_CLUSTER_PASSWORD') | default('password', true) }}"
-    lxd_cluster_address: 10.10.20.1/24
+    lxd_cluster_address: 10.10.10.10/24
     lxd_cluster_name: klustered
     lxd_cluster_cert: "{{ lookup('env', 'LXD_CLUSTER_CI_CERT') | default('your toast if this hits', true) }}"
     lxd_cluster_cert_name: "{{ lookup('env', 'LXD_CLUSTER_CERT_NAME') | default('terraform-ci-client', true) }}"

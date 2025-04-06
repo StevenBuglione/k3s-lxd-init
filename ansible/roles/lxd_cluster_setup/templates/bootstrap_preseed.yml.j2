@@ -5,12 +5,8 @@ config:
 storage_pools:
   - name: default
     driver: dir
-networks:
-  - name: lxdbr0
-    type: bridge
-    config:
-      ipv4.address: "{{ lxd_cluster_address }}"
-      ipv6.address: none
+# Remove the LXD-managed network since we’re using macvlan on the physical interface.
+# networks:  <== This section is no longer needed.
 profiles:
   - name: default
     devices:
@@ -20,9 +16,10 @@ profiles:
         type: disk
       eth0:
         name: eth0
-        nictype: bridged
-        parent: lxdbr0
+        nictype: macvlan
+        parent: eth0    # Use your actual physical interface here.
         type: nic
 cluster:
   server_name: "{{ server_name }}"
   enabled: true
+

@@ -1,0 +1,28 @@
+---
+- name: Check if macvlan0 interface already exists
+  shell: ip link show macvlan0
+  register: macvlan_exists
+  ignore_errors: true
+  changed_when: false
+  when: inventory_hostname in groups['bootstrap_server']
+
+- name: Create macvlan0 interface
+  command: ip link add macvlan0 link eth0 type macvlan mode bridge
+  when:
+    - inventory_hostname in groups['bootstrap_server']
+    - macvlan_exists.rc != 0
+  become: true
+
+- name: Set IP address for macvlan0
+  command: ip addr add 10.10.10.200/24 dev macvlan0
+  when:
+    - inventory_hostname in groups['bootstrap_server']
+    - macvlan_exists.rc != 0
+  become: true
+
+- name: Bring up macvlan0 interface
+  command: ip link set macvlan0 up
+  when:
+    - inventory_hostname in groups['bootstrap_server']
+    - macvlan_exists.rc != 0
+  become: true
