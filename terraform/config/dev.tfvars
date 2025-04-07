@@ -35,3 +35,7 @@ lxc_cloud_init_configuration = {
 
 lxc_network_gateway4 = "10.10.10.1"
 lxc_network_nameserver_addresses = ["10.10.10.1"]
+
+argocd_admin_password = "password"
+argo_project_dev_url = "https://raw.githubusercontent.com/StevenBuglione/k3s-argocd-boot/master/registry/projects/development/project-dev.yml"
+argo_root_app_dev_url = "https://raw.githubusercontent.com/StevenBuglione/k3s-argocd-boot/master/registry/projects/development/root-app-dev.yml"
