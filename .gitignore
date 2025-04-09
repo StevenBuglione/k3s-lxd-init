@@ -8,3 +8,11 @@ terraform/.terraform/*
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 terraform/.terraform.lock.hcl
+live/dev/remote_state_backend/.terragrunt-cache
+live/dev/remote_state_backend/.terraform.lock.hcl
+live/dev/*/.terragrunt-cache
+live/dev/*/.terraform.lock.hcl
+
+live/dev-seed/*/.terragrunt-cache
+live/dev-seed/*/.terraform.lock.hcl
+
