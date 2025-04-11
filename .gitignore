@@ -13,6 +13,8 @@ live/dev/remote_state_backend/.terraform.lock.hcl
 live/dev/*/.terragrunt-cache
 live/dev/*/.terraform.lock.hcl
 
-live/dev-seed/*/.terragrunt-cache
-live/dev-seed/*/.terraform.lock.hcl
+live/boot/*/.terragrunt-cache
+live/boot/*/.terraform.lock.hcl
+test/.terraform/*
+test/.terraform.lock.hcl
 

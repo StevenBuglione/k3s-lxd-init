@@ -1,6 +1,6 @@
 resource "onepassword_item" "minio_backend_config" {
   vault    = var.vault_name
-  title    = "MinIO Terraform Backend - ${var.state_bucket_name}"
+  title    = var.state_bucket_name
   category = "secure_note"
 
   section {
@@ -26,13 +26,13 @@ resource "onepassword_item" "minio_backend_config" {
 
     field {
       label = "access_key"
-      value = minio_iam_user.cicd_user.name
+      value = minio_iam_user.admin_user.name
       type = "STRING"
     }
 
     field {
       label = "secret_key"
-      value = minio_iam_user.cicd_user.secret
+      value = minio_iam_user.admin_user.secret
       type = "STRING"
     }
 

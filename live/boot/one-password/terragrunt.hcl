@@ -1,9 +1,9 @@
 // live/dev/secrets/terragrunt.hcl
 terraform {
-  source = "../../../infrastructure/modules/secrets"
+  source = "../../../infrastructure/modules/one-password"
 }
 
 inputs = {
   vault_name = "Home-Lab"
-  item_title = "minio"
+  secret_name = "minio"
 }
